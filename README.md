@@ -1,2 +1,2 @@
-# clickbait-frontend
-Flutter web application for labeling clickbait data for AI project.
+# Czy to clickbait?
+Flutter web application for labelling clickbait data for machine learning project.
