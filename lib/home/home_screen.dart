@@ -1,3 +1,4 @@
+import 'package:clickbait_app/widgets/top_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:clickbait_app/widgets/clickbait_button.dart';
 
@@ -14,37 +15,13 @@ class HomeScreenState extends State<HomeScreen> {
     return LayoutBuilder(
       builder: ((context, constraints) {
         return Scaffold(
-          backgroundColor: Colors.blueGrey.shade900,
-          appBar: AppBar(
-            backgroundColor: Colors.blueGrey.shade800,
-            title: SizedBox(
-              height: kToolbarHeight,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4.0),
-                child: Image.asset(
-                  'assets/images/logo-clickbait.png',
-                ),
-              ),
-            ),
-            actions: <Widget>[
-              IconButton(
-                icon: Icon(
-                  Icons.help,
-                ),
-                onPressed: () {},
-              ),
-              IconButton(
-                icon: Icon(
-                  Icons.leaderboard,
-                ),
-                onPressed: () {},
-              ),
-            ],
-          ),
+          backgroundColor: Colors.blueGrey.shade800,
           body: Center(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
+                const TopBar(),
+                const SizedBox(height: 40,),
                 ClickbaitButton(
                   text: 'TAK',
                   icon: Icons.check,
