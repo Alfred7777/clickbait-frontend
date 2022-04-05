@@ -1,9 +1,11 @@
-import 'package:clickbait_app/widgets/top_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:clickbait_app/widgets/top_bar.dart';
 import 'package:clickbait_app/widgets/clickbait_button.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
+
+  static const String route = '/';
 
   @override
   State<HomeScreen> createState() => HomeScreenState();

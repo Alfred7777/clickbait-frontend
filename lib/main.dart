@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:clickbait_app/home/home_screen.dart';
+import 'package:clickbait_app/help/help_screen.dart';
+import 'package:clickbait_app/ranking/ranking_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -8,12 +10,16 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: 'Czy to clickbait?',
-      home: HomeScreen(),
+      initialRoute: HomeScreen.route,
+      routes: {
+        HomeScreen.route: (context) => const HomeScreen(),
+        HelpScreen.route: (context) => const HelpScreen(),
+        RankingScreen.route: (context) => const RankingScreen(),
+      },
     );
   }
 }
