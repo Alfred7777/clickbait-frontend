@@ -181,7 +181,7 @@ class RankingListElement extends StatelessWidget {
                 width: height * 2,
                 child: Center(
                   child: RankingListElementText(
-                    text: index.toString(),
+                    text: (index + 1).toString(),
                     fontSize: height / 3.6,
                   ),
                 ),

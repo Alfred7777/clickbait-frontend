@@ -3,17 +3,16 @@ import 'package:equatable/equatable.dart';
 class UserRepository {
   List<User> getRankingList() {
     // implement fetching data from API
-
     if (true) {
       return [
         User(
           userID: '4', 
-          uniqueUsername: 'filipg', 
+          uniqueUsername: 'KrzysztofJarzyna', 
           rankingPoints: 480,
         ),
         User(
           userID: '1', 
-          uniqueUsername: 'filipGIGACHAD', 
+          uniqueUsername: 'kotlet_schabowy', 
           rankingPoints: 460,
         ),
         User(
@@ -28,12 +27,12 @@ class UserRepository {
         ),
         User(
           userID: '3', 
-          uniqueUsername: 'najlepszyclickbait', 
+          uniqueUsername: 'JoseArcadioMorales', 
           rankingPoints: 211,
         ),
         User(
           userID: '2', 
-          uniqueUsername: 'KrzysztofJassem', 
+          uniqueUsername: 'siwy_bajerant', 
           rankingPoints: 10,
         ),
       ];
