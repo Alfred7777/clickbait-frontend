@@ -55,7 +55,7 @@ class RankingScreenState extends State<RankingScreen> {
                             state.error,
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              color: Colors.white,
+                              color: Colors.grey.shade100,
                               fontFamily: 'Poppins',
                               fontSize: constraints.maxWidth < 600 ? 16 : 20,
                             ),
@@ -73,8 +73,8 @@ class RankingScreenState extends State<RankingScreen> {
                             vertical: constraints.maxWidth < 600 ? 18 : 24,
                             horizontal: constraints.maxWidth < 600 ? 18 : 24, 
                           ),
-                          child: const CircularProgressIndicator(
-                            color: Colors.white,
+                          child: CircularProgressIndicator(
+                            color: Colors.grey.shade100,
                           ),
                         ),
                       );
@@ -87,6 +87,5 @@ class RankingScreenState extends State<RankingScreen> {
         );
       }),
     );
-    
   }
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class ClickbaitButton extends StatelessWidget {
   final String text;
-  final IconData icon;
+  final IconData? icon;
   final Color primaryColor;
   final Color secondaryColor;
   final double fontSize;
@@ -39,9 +39,11 @@ class ClickbaitButton extends StatelessWidget {
                 top: fontSize * 0.1,
                 right: fontSize * 0.05,
               ),
-              child: Icon(
+              child: icon != null ? Icon(
                 icon,
                 size: fontSize,
+              ) : SizedBox(
+                width: fontSize * 0.15,
               ),
             ),
             Text(text),

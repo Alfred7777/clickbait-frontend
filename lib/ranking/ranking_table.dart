@@ -142,7 +142,7 @@ class RankingListHeaderText extends StatelessWidget {
     return Text(
       text,
       style: TextStyle(
-        color: Colors.white,
+        color: Colors.grey.shade100,
         fontFamily: 'Poppins',
         fontSize: fontSize,
         fontWeight: FontWeight.w600,
@@ -225,7 +225,7 @@ class RankingListElementText extends StatelessWidget {
     return Text(
       text,
       style: TextStyle(
-        color: Colors.white,
+        color: Colors.grey.shade100,
         fontFamily: 'Poppins',
         fontSize: fontSize,
         fontWeight: FontWeight.w400,

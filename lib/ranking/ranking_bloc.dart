@@ -8,7 +8,7 @@ class RankingBloc extends Bloc<RankingEvent, RankingState> {
 
   RankingBloc({
     required this.userRepository,
-  })  : assert(userRepository != null), super(RankingUninitialized()) {
+  })  : super(RankingUninitialized()) {
     on<FetchRanking>((event, emit) async {
       emit(RankingLoading());
       try {

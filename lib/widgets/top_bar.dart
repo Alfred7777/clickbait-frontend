@@ -90,7 +90,7 @@ class TopBarButton extends StatelessWidget {
       child: TextButton(
         child: Icon(
           icon,
-          color: Colors.white,
+          color: Colors.grey.shade100,
           size: iconSize,
         ),
         onPressed: onPressed,

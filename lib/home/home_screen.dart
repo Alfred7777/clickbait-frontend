@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:clickbait_app/widgets/top_bar.dart';
 import 'package:clickbait_app/widgets/clickbait_button.dart';
+import 'package:clickbait_app/repositories/user_repository.dart';
+import 'package:clickbait_app/repositories/title_repository.dart';
+import 'home_bloc.dart';
+import 'home_event.dart';
+import 'home_state.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -12,72 +18,345 @@ class HomeScreen extends StatefulWidget {
 }
 
 class HomeScreenState extends State<HomeScreen> {
+  final userRepository = UserRepository();
+  final titleRepository = TitleRepository();
+  late HomeBloc _homeBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _homeBloc = HomeBloc(
+      userRepository: userRepository,
+      titleRepository: titleRepository,
+    );
+  }
+
+  void _onCreateAccount(String username) {
+    _homeBloc.add(CreateUser(username: username));
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.blueGrey.shade800,
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          return Column(
+    return LayoutBuilder(
+      builder: ((context, constraints) {
+        return Scaffold(
+          backgroundColor: Colors.blueGrey.shade800,
+          body: Column(
             children: <Widget>[
               const TopBar(),
               Expanded(
-                child: Center(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: constraints.maxWidth < 600 ? 18 : 24,
+                child: BlocBuilder(
+                    bloc: _homeBloc,
+                    builder: (context, state) {
+                      if (state is HomeUninitialized) {
+                        _homeBloc.add(CheckUserID());
+                      }
+                      if (state is HomeAccount) {
+                        _homeBloc.add(FetchTitle());
+                      }
+                      if (state is CreateUserFailure) {
+                        return HomePlaceholder(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                              vertical: constraints.maxWidth < 600 ? 18 : 24,
+                              horizontal: constraints.maxWidth < 600 ? 18 : 24,
+                            ),
+                            child: Text(
+                              state.error,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.grey.shade100,
+                                fontFamily: 'Poppins',
+                                fontSize: constraints.maxWidth < 600 ? 16 : 20,
+                              ),
+                            ),
+                          ),
+                        );
+                      } else if (state is FetchTitleFailure) {
+                        return HomePlaceholder(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                              vertical: constraints.maxWidth < 600 ? 18 : 24,
+                              horizontal: constraints.maxWidth < 600 ? 18 : 24,
+                            ),
+                            child: Text(
+                              state.error,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.grey.shade100,
+                                fontFamily: 'Poppins',
+                                fontSize: constraints.maxWidth < 600 ? 16 : 20,
+                              ),
+                            ),
+                          ),
+                        );
+                      } else if (state is HomeNoAccount) {
+                        return CreateAccountForm(
+                          onButtonPressed: _onCreateAccount,
+                        );
+                      } else if (state is HomeReady) {
+                        return HomeLayout(
+                          title: state.title,
+                        );
+                      } else {
+                        return HomePlaceholder(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                              vertical: constraints.maxWidth < 600 ? 18 : 24,
+                              horizontal: constraints.maxWidth < 600 ? 18 : 24,
+                            ),
+                            child: CircularProgressIndicator(
+                              color: Colors.grey.shade100,
+                            ),
+                          ),
+                        );
+                      }
+                    }),
+              ),
+            ],
+          ),
+        );
+      }),
+    );
+  }
+}
+
+class HomeLayout extends StatelessWidget {
+  final String title;
+
+  const HomeLayout({
+    Key? key,
+    required this.title,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Column(
+          children: <Widget>[
+            const TopBar(),
+            Expanded(
+              child: Center(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: constraints.maxWidth < 600 ? 18 : 24,
+                  ),
+                  child: ClickbaitTitle(
+                    title: title,
+                    fontSize: constraints.maxWidth < 600 ? 24 : 28,
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(
+                vertical: constraints.maxWidth < 600 ? 24 : 32,
+                horizontal: constraints.maxWidth < 600 ? 18 : 24,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  ClickbaitButton(
+                    text: 'TAK',
+                    icon: Icons.check,
+                    primaryColor: Colors.green.shade300,
+                    secondaryColor: Colors.green.shade400,
+                    fontSize: constraints.maxWidth < 600 ? 36 : 44,
+                    onPressed: () {},
+                  ),
+                  ClickbaitButton(
+                    text: 'NIE',
+                    icon: Icons.close,
+                    primaryColor: Colors.red.shade300,
+                    secondaryColor: Colors.red.shade400,
+                    fontSize: constraints.maxWidth < 600 ? 36 : 44,
+                    onPressed: () {},
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(
+                bottom: constraints.maxWidth < 600 ? 108 : 144,
+              ),
+              child: ClickbaitButton(
+                text: 'POMIŃ',
+                icon: Icons.skip_next,
+                primaryColor: Colors.lightBlue.shade600,
+                secondaryColor: Colors.lightBlue.shade700,
+                fontSize: constraints.maxWidth < 600 ? 36 : 44,
+                onPressed: () {},
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class HomePlaceholder extends StatelessWidget {
+  final Widget child;
+
+  const HomePlaceholder({
+    Key? key,
+    required this.child,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: ((context, constraints) {
+        return Padding(
+          padding: EdgeInsets.symmetric(
+            vertical: constraints.maxWidth < 600 ? 18 : 24,
+            horizontal: constraints.maxWidth < 600 ? 18 : 24,
+          ),
+          child: Container(
+            height: constraints.maxHeight,
+            width: constraints.maxWidth,
+            decoration: BoxDecoration(
+              color: Colors.transparent,
+              borderRadius: BorderRadius.circular(
+                constraints.maxWidth < 600 ? 24 : 32,
+              ),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(
+                constraints.maxWidth < 600 ? 24 : 32,
+              ),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: Center(
+                      child: child,
                     ),
-                    child: ClickbaitTitle(
-                      title: 'Ogromne sankcje na córki Putina robią wrażenie! Nowe doniesienia amerykańskich mediów.',
-                      fontSize: constraints.maxWidth < 600 ? 24 : 28,
-                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      }),
+    );
+  }
+}
+
+class CreateAccountForm extends StatelessWidget {
+  final _formKey = GlobalKey<FormState>();
+  final Function onButtonPressed;
+
+  CreateAccountForm({
+    Key? key,
+    required this.onButtonPressed,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: ((context, constraints) {
+        return Form(
+          key: _formKey,
+          child: Column(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(
+                  top: constraints.maxWidth < 600 ? 64 : 96,
+                  left: constraints.maxWidth < 600 ? 24 : 32,
+                  right: constraints.maxWidth < 600 ? 24 : 32,
+                ),
+                child: Text(
+                  'Aby kontynuować musisz utworzyć swoją nazwe użytkownika!',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.grey.shade100,
+                    fontSize: constraints.maxWidth < 600 ? 18 : 24,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(
-                  vertical: constraints.maxWidth < 600 ? 24 : 32,
-                  horizontal: constraints.maxWidth < 600 ? 18 : 24,
+                padding: EdgeInsets.only(
+                  top: constraints.maxWidth < 600 ? 24 : 32,
+                  bottom: constraints.maxWidth < 600 ? 24 : 32,
+                  left: constraints.maxWidth < 600 ? 18 : 24,
+                  right: constraints.maxWidth < 600 ? 18 : 24,
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    ClickbaitButton(
-                      text: 'TAK',
-                      icon: Icons.check,
-                      primaryColor: Colors.green.shade300,
-                      secondaryColor: Colors.green.shade400,
-                      fontSize: constraints.maxWidth < 600 ? 36 : 44,
-                      onPressed: () {},
+                child: TextFormField(
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Nazwa użytkownika nie może być pusta!';
+                    } else if (value.length < 3) {
+                      return 'Nazwa użytkownika musi być dłuższa niż 3 znaki!';
+                    } else if (value.length > 20) {
+                      return 'Nazwa użytkownika musi być krótsza niż 20 znaków!';
+                    } else if (!RegExp(r'^[A-Za-z0-9_]+$').hasMatch(value)) {
+                      return 'Nazwa użytkownika zawiera niedozwolone znaki!';
+                    }
+                    return null;
+                  },
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(
+                        constraints.maxWidth < 600 ? 24 : 32,
+                      ),
                     ),
-                    ClickbaitButton(
-                      text: 'NIE',
-                      icon: Icons.close,
-                      primaryColor: Colors.red.shade300,
-                      secondaryColor: Colors.red.shade400,
-                      fontSize: constraints.maxWidth < 600 ? 36 : 44,
-                      onPressed: () {},
+                    contentPadding: EdgeInsets.symmetric(
+                      vertical: constraints.maxWidth < 600 ? 16 : 24,
+                      horizontal: constraints.maxWidth < 600 ? 24 : 30,
                     ),
-                  ],
+                    labelText: 'Username',
+                    labelStyle: TextStyle(
+                      color: Colors.grey.shade300,
+                      fontSize: constraints.maxWidth < 600 ? 20 : 28,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w600,
+                    ),
+                    hintText: 'Enter your username',
+                    hintStyle: TextStyle(
+                      color: Colors.grey.shade100,
+                      fontSize: constraints.maxWidth < 600 ? 20 : 28,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w400,
+                    ),
+                    errorStyle: TextStyle(
+                      color: Colors.red.shade400,
+                      fontSize: constraints.maxWidth < 600 ? 12 : 16,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w400,
+                    ),
+                    errorMaxLines: 3,
+                    fillColor: Colors.blueGrey.shade900,
+                    filled: true,
+                  ),
+                  style: TextStyle(
+                    color: Colors.grey.shade100,
+                    fontSize: constraints.maxWidth < 600 ? 20 : 28,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w400,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.only(
-                  bottom: constraints.maxWidth < 600 ? 108 : 144,
-                ),
-                child: ClickbaitButton(
-                  text: 'POMIŃ',
-                  icon: Icons.skip_next,
-                  primaryColor: Colors.lightBlue.shade600,
-                  secondaryColor: Colors.lightBlue.shade700,
-                  fontSize: constraints.maxWidth < 600 ? 36 : 44,
-                  onPressed: () {},
-                ),
+              ClickbaitButton(
+                text: 'UTWÓRZ',
+                icon: null,
+                primaryColor: Colors.lightBlue.shade600,
+                secondaryColor: Colors.lightBlue.shade700,
+                fontSize: constraints.maxWidth < 600 ? 28 : 36,
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    onButtonPressed;
+                  }
+                },
               ),
             ],
-          );
-        },
-      ),
+          ),
+        );
+      }),
     );
   }
 }
@@ -98,7 +377,7 @@ class ClickbaitTitle extends StatelessWidget {
       title,
       textAlign: TextAlign.center,
       style: TextStyle(
-        color: Colors.white,
+        color: Colors.grey.shade100,
         fontSize: fontSize,
         fontFamily: 'Poppins',
         fontWeight: FontWeight.w600,

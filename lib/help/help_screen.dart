@@ -50,7 +50,7 @@ class HelpList extends StatelessWidget {
                   text: TextSpan(
                     text: 'Na głównym ekranie aplikacji zostanie Ci wyświetlony nagłówek internetowego artykułu. Twoim zadaniem jest ocenić, czy to clickbait, klikając przycisk ',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Colors.grey.shade100,
                       fontSize: constraints.maxWidth < 600 ? 18 : 24,
                       fontFamily: 'Poppins',
                       fontWeight: FontWeight.w400,
@@ -104,7 +104,7 @@ class HelpList extends StatelessWidget {
                   text: TextSpan(
                     text: 'Clickbait to zjawisko internetowe polegające na przyciąganiu uwagi za pomocą tytułów bądź miniaturek, które przesadnie wyolbrzymiają faktyczną treść lub znaczenie artykułu. ',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Colors.grey.shade100,
                       fontSize: constraints.maxWidth < 600 ? 18 : 24,
                       fontFamily: 'Poppins',
                       fontWeight: FontWeight.w400,
@@ -132,7 +132,7 @@ class HelpList extends StatelessWidget {
                   text: TextSpan(
                     text: 'Jako mały element rozrywki i rywalizacji w aplikacji został dodany ranking. ',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Colors.grey.shade100,
                       fontSize: constraints.maxWidth < 600 ? 18 : 24,
                       fontFamily: 'Poppins',
                       fontWeight: FontWeight.w400,
@@ -168,7 +168,7 @@ class HelpHeaderText extends StatelessWidget {
       text,
       textAlign: TextAlign.center,
       style: TextStyle(
-        color: Colors.white,
+        color: Colors.grey.shade100,
         fontSize: fontSize,
         fontFamily: 'Poppins',
         fontWeight: FontWeight.w600,
