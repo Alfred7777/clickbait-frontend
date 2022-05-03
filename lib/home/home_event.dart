@@ -23,14 +23,16 @@ class CreateUser extends HomeEvent {
 class FetchTitle extends HomeEvent {}
 
 class SendAnswer extends HomeEvent {
-  final bool answer;
+  final String eventID;
+  final bool? answer;
 
   const SendAnswer({
+    required this.eventID,
     required this.answer,
   });
 
   @override
-  List<Object> get props => [answer];
+  List<Object> get props => [eventID];
 }
 
 

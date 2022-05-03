@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class UserRepository {
   Future<String?> getUserID() async {
@@ -13,53 +15,53 @@ class UserRepository {
     }
   }
 
-  Future<void> createUser(String username) async {
+  Future<String> createUser(String username) async {
     final prefs = await SharedPreferences.getInstance();
-    // implement sending data to API
-    if (true) {
-      await prefs.setString('userID', '753gh-ghurow52-jgiotek-g28h9');
+    var uri = Uri(
+      scheme: 'http',
+      host: 'localhost',
+      port: 62266,
+      path: '/user/create',
+    );
+
+    var headers = {
+      'Content-Type': 'application/json',
+    };
+    var body = {
+      'username': username,
+    };
+
+    var response = await http.post(
+      uri,
+      headers: headers,
+      body: json.encode(body),
+    );
+
+    if (response.statusCode == 201) {
+      await prefs.setString('userID', json.decode(response.body)['user_id']);
+      return json.decode(response.body)['user_id'];
+    } else if (response.statusCode == 409) {
+      return Future.error('Nazwa użytkownika jest już zajęta!');
     } else {
-      throw Exception('Failed to create user! Check internet connection.');
+      return Future.error('Nie udało się utworzyć nazwy użytkownika!');
     }
   }
 
-  List<User> getRankingList() {
-    // implement fetching data from API
-    if (true) {
-      return [
-        User(
-          userID: '4',
-          uniqueUsername: 'KrzysztofJarzyna',
-          rankingPoints: 480,
-        ),
-        User(
-          userID: '1',
-          uniqueUsername: 'kotlet_schabowy',
-          rankingPoints: 460,
-        ),
-        User(
-          userID: '0',
-          uniqueUsername: 'Alfred7777',
-          rankingPoints: 336,
-        ),
-        User(
-          userID: '5',
-          uniqueUsername: 'ZnawcaClickbaitu',
-          rankingPoints: 288,
-        ),
-        User(
-          userID: '3',
-          uniqueUsername: 'JoseArcadioMorales',
-          rankingPoints: 211,
-        ),
-        User(
-          userID: '2',
-          uniqueUsername: 'siwy_bajerant',
-          rankingPoints: 10,
-        ),
-      ];
+  Future<List<User>> getRankingList() async {
+    var uri = Uri(
+      scheme: 'http',
+      host: 'localhost',
+      port: 62266,
+      path: '/user/ranking',
+    );
+
+    var response = await http.get(uri);
+
+    if (response.statusCode == 200) {
+      var users = json.decode(response.body)['users'];
+      return users.map<User>((user) => User.fromJson(user)).toList();
     } else {
-      throw Exception('Failed to fetch ranking! Check internet connection.');
+      return Future.error('Nie udało się pobrać listy rankingowej!');
     }
   }
 }
@@ -67,19 +69,19 @@ class UserRepository {
 class User extends Equatable {
   final String userID;
   final String uniqueUsername;
-  final int rankingPoints;
+  final int rankingScore;
 
   const User({
     required this.userID,
     required this.uniqueUsername,
-    required this.rankingPoints,
+    required this.rankingScore,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       userID: json['user_id'],
-      uniqueUsername: json['unique_username'],
-      rankingPoints: json['ranking_points'],
+      uniqueUsername: json['username'],
+      rankingScore: json['score'],
     );
   }
 
@@ -87,6 +89,6 @@ class User extends Equatable {
   List<Object> get props => [
         userID,
         uniqueUsername,
-        rankingPoints,
+        rankingScore,
       ];
 }

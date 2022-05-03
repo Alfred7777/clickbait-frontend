@@ -12,11 +12,13 @@ class RankingBloc extends Bloc<RankingEvent, RankingState> {
     on<FetchRanking>((event, emit) async {
       emit(RankingLoading());
       try {
+        var _userID = await userRepository.getUserID();
         var _rankingList = await userRepository.getRankingList();
         
         emit(
           RankingReady(
             rankingList: _rankingList,
+            userID: _userID,
           ),
         );
       } catch (exception) {

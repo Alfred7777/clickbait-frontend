@@ -23,7 +23,7 @@ class ClickbaitButton extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         border: Border.all(
-          color: Colors.white,
+          color: Colors.grey.shade100,
           width: fontSize * 0.08,
         ),
         borderRadius: BorderRadius.circular(fontSize * 0.52),
@@ -50,7 +50,7 @@ class ClickbaitButton extends StatelessWidget {
           ],
         ),
         style: OutlinedButton.styleFrom(
-          primary: Colors.white,
+          primary: Colors.grey.shade100,
           backgroundColor: primaryColor,
           elevation: 0,
           padding: EdgeInsets.only(

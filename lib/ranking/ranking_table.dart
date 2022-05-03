@@ -3,10 +3,12 @@ import 'package:clickbait_app/repositories/user_repository.dart';
 
 class RankingTable extends StatelessWidget {
   final List<User> rankingList;
+  final String userID;
 
   const RankingTable({
     Key? key,
     required this.rankingList,
+    required this.userID,
   }) : super(key: key);
 
   @override
@@ -35,6 +37,7 @@ class RankingTable extends StatelessWidget {
                 headerHeight: constraints.maxWidth < 600 ? 64 : 80,
                 elementHeight: constraints.maxWidth < 600 ? 48 : 60,
                 rankingList: rankingList,
+                userID: userID,
               ),
             ),
           ),
@@ -48,12 +51,14 @@ class RankingList extends StatelessWidget {
   final double headerHeight;
   final double elementHeight;
   final List<User> rankingList;
+  final String userID;
 
   const RankingList({
     Key? key,
     required this.headerHeight,
     required this.elementHeight,
     required this.rankingList,
+    required this.userID,
   }) : super(key: key);
 
   @override
@@ -70,6 +75,7 @@ class RankingList extends StatelessWidget {
               return RankingListElement(
                 index: index,
                 user: rankingList[index],
+                isUser: rankingList[index].userID == userID,
                 height: elementHeight,
               );
             },
@@ -154,12 +160,14 @@ class RankingListHeaderText extends StatelessWidget {
 class RankingListElement extends StatelessWidget {
   final int index;
   final User user;
+  final bool isUser;
   final double height;
 
   const RankingListElement({
     Key? key,
     required this.index,
     required this.user,
+    required this.isUser,
     required this.height,
   }) : super(key: key);
 
@@ -169,7 +177,7 @@ class RankingListElement extends StatelessWidget {
       builder: ((context, constraints) {
         return Container(
           height: height,
-          color: user.userID == '0' // change for real id check
+          color: isUser
               ? Colors.lightBlue.shade900
               : index % 2 == 0
                   ? Colors.blueGrey.shade800
@@ -197,7 +205,7 @@ class RankingListElement extends StatelessWidget {
                 width: height * 2,
                 child: Center(
                   child: RankingListElementText(
-                    text: user.rankingPoints.toString(),
+                    text: user.rankingScore.toString(),
                     fontSize: height / 3.6,
                   ),
                 ),

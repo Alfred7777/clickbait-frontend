@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:clickbait_app/repositories/title_repository.dart';
 
 class HomeState extends Equatable {
   const HomeState();
@@ -16,9 +17,20 @@ class HomeNoAccount extends HomeState {}
 class HomeAccount extends HomeState {}
 
 class HomeReady extends HomeState {
-  final String title;
+  final ArticleTitle title;
 
   const HomeReady({
+    required this.title,
+  });
+
+  @override
+  List<Object> get props => [title];
+}
+
+class EndOfTheWorld extends HomeState {
+  final ArticleTitle title;
+
+  const EndOfTheWorld({
     required this.title,
   });
 

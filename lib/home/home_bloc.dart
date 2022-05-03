@@ -25,8 +25,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<CreateUser>((event, emit) async {
       emit(HomeLoading());
       try {
-        userRepository.createUser(event.username);
-        var _title = titleRepository.getTitle();
+        var _userID = await userRepository.createUser(event.username);
+        var _title = await titleRepository.getTitle(_userID);
 
         emit(
           HomeReady(
@@ -45,7 +45,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<FetchTitle>((event, emit) async {
       emit(HomeLoading());
       try {
-        var _title = titleRepository.getTitle();
+        var _userID = await userRepository.getUserID();
+        var _title = await titleRepository.getTitle(_userID!);
 
         emit(
           HomeReady(
@@ -64,8 +65,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<SendAnswer>((event, emit) async {
       emit(HomeLoading());
       try {
-        titleRepository.sendAnswer(event.answer);
-        var _title = titleRepository.getTitle();
+        var _userID = await userRepository.getUserID();
+        if (event.answer != null) {
+          titleRepository.sendAnswer(_userID!, event.eventID, event.answer!);
+        }
+        var _title = await titleRepository.getTitle(_userID!);
 
         emit(
           HomeReady(
@@ -85,6 +89,5 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   @override
   void onChange(Change<HomeState> change) {
     super.onChange(change);
-    print('State changed from ${change.currentState} to ${change.nextState}.');
   }
 }

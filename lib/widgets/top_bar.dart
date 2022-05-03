@@ -33,8 +33,19 @@ class TopBar extends StatelessWidget {
                     bottom: constraints.maxWidth < 600 ? 18 : 24,
                     left: constraints.maxWidth < 600 ? 24 : 30,
                   ),
-                  child: Image.asset(
-                    'assets/images/logo-clickbait.png',
+                  child: InkWell(
+                    onTap: () {
+                      var route = ModalRoute.of(context);
+                      if (route != null) {
+                        var currentRoute = route.settings.name;
+                        if (currentRoute != '/') {
+                          Navigator.pushNamed(context, '/');
+                        }
+                      }
+                    },
+                    child: Image.asset(
+                      'assets/images/logo-clickbait.png',
+                    ),
                   ),
                 ),
                 Expanded(
@@ -47,7 +58,13 @@ class TopBar extends StatelessWidget {
                   iconSize: constraints.maxWidth < 600 ? 30 : 36,
                   padding: constraints.maxWidth < 600 ? 12 : 16,
                   onPressed: () {
-                    Navigator.pushNamed(context, '/help');
+                    var route = ModalRoute.of(context);
+                    if (route != null) {
+                      var currentRoute = route.settings.name;
+                      if (currentRoute != '/help') {
+                        Navigator.pushNamed(context, '/help');
+                      }
+                    }
                   },
                 ),
                 TopBarButton(
@@ -55,7 +72,13 @@ class TopBar extends StatelessWidget {
                   iconSize: constraints.maxWidth < 600 ? 30 : 36,
                   padding: constraints.maxWidth < 600 ? 12 : 16,
                   onPressed: () {
-                    Navigator.pushNamed(context, '/ranking');
+                    var route = ModalRoute.of(context);
+                    if (route != null) {
+                      var currentRoute = route.settings.name;
+                      if (currentRoute != '/ranking') {
+                        Navigator.pushNamed(context, '/ranking');
+                      }
+                    }
                   },
                 ),
               ],
@@ -108,5 +131,5 @@ class TopBarButton extends StatelessWidget {
         ),
       ),
     );
-}
+  }
 }

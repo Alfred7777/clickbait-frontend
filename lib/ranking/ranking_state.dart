@@ -14,9 +14,11 @@ class RankingLoading extends RankingState {}
 
 class RankingReady extends RankingState {
   final List<User> rankingList;
+  final String? userID;
 
   const RankingReady({
     required this.rankingList,
+    required this.userID,
   });
 
   @override

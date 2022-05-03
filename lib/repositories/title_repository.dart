@@ -1,11 +1,89 @@
 import 'package:equatable/equatable.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class TitleRepository {
-  String getTitle() {
-    return 'Ogromne sankcje na córki Putina robią wrażenie! Nowe doniesienia amerykańskich mediów.';
+  Future<ArticleTitle> getTitle(String userID) async {
+    var uri = Uri(
+      scheme: 'http',
+      host: 'localhost',
+      port: 62266,
+      path: '/title/',
+    );
+
+    var headers = {
+      'Authorization': userID,
+      'Content-Type': 'application/json',
+    };
+
+    var response = await http.get(
+      uri,
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      return ArticleTitle.fromJson(json.decode(response.body));
+    } else if (response.statusCode == 204) {
+      return const ArticleTitle(
+        titleID: '666666',
+        content: 'Oznaczyłeś wszystkie tytuły z naszej bazy danych!',
+      );
+    } else {
+      return Future.error('Nie udało się pobrać kolejnego nagłówka!');
+    }
   }
 
-  void sendAnswer(bool answer) {
-    // implement API call
+  void sendAnswer(String userID, String titleID, bool answer) async {
+    var uri = Uri(
+      scheme: 'http',
+      host: 'localhost',
+      port: 62266,
+      path: '/title/label',
+    );
+
+    var headers = {
+      'Content-Type': 'application/json',
+    };
+    var body = {
+      'user_id': userID,
+      'title_id': titleID,
+      'label': answer,
+    };
+
+    var response = await http.post(
+      uri,
+      headers: headers,
+      body: json.encode(body),
+    );
+
+    if (response.statusCode == 201) {
+    } else if (response.statusCode == 409) {
+      return Future.error('Ten użytkownik już oznaczył ten tytuł!');
+    } else {
+      return Future.error('Nie udało się przesłać odpowiedzi!');
+    }
   }
+}
+
+class ArticleTitle extends Equatable {
+  final String titleID;
+  final String content;
+
+  const ArticleTitle({
+    required this.titleID,
+    required this.content,
+  });
+
+  factory ArticleTitle.fromJson(Map<String, dynamic> json) {
+    return ArticleTitle(
+      titleID: json['id'],
+      content: json['content'],
+    );
+  }
+
+  @override
+  List<Object> get props => [
+        titleID,
+        content,
+      ];
 }

@@ -21,6 +21,7 @@ class HomeScreenState extends State<HomeScreen> {
   final userRepository = UserRepository();
   final titleRepository = TitleRepository();
   late HomeBloc _homeBloc;
+  late TextEditingController _usernameController;
 
   @override
   void initState() {
@@ -29,10 +30,24 @@ class HomeScreenState extends State<HomeScreen> {
       userRepository: userRepository,
       titleRepository: titleRepository,
     );
+    _usernameController = TextEditingController();
   }
 
-  void _onCreateAccount(String username) {
-    _homeBloc.add(CreateUser(username: username));
+  void _onSendAnswer(String eventID, bool? answer) {
+    _homeBloc.add(
+      SendAnswer(
+        eventID: eventID,
+        answer: answer,
+      ),
+    );
+  }
+
+  void _onCreateAccount() {
+    _homeBloc.add(
+      CreateUser(
+        username: _usernameController.text,
+      ),
+    );
   }
 
   @override
@@ -45,73 +60,68 @@ class HomeScreenState extends State<HomeScreen> {
             children: <Widget>[
               const TopBar(),
               Expanded(
-                child: BlocBuilder(
-                    bloc: _homeBloc,
-                    builder: (context, state) {
-                      if (state is HomeUninitialized) {
-                        _homeBloc.add(CheckUserID());
-                      }
-                      if (state is HomeAccount) {
-                        _homeBloc.add(FetchTitle());
-                      }
-                      if (state is CreateUserFailure) {
-                        return HomePlaceholder(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                              vertical: constraints.maxWidth < 600 ? 18 : 24,
-                              horizontal: constraints.maxWidth < 600 ? 18 : 24,
-                            ),
-                            child: Text(
-                              state.error,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.grey.shade100,
-                                fontFamily: 'Poppins',
-                                fontSize: constraints.maxWidth < 600 ? 16 : 20,
-                              ),
-                            ),
+                child: BlocConsumer(
+                  bloc: _homeBloc,
+                  listener: (context, state) {
+                    if (state is CreateUserFailure) {
+                      var snackBar = SnackBar(
+                        content: Text(state.error),
+                        backgroundColor: Colors.red.shade400,
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    }
+                    if (state is FetchTitleFailure) {
+                      var snackBar = SnackBar(
+                        content: Text(state.error),
+                        backgroundColor: Colors.red.shade400,
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    }
+                  },
+                  buildWhen: (previous, current) {
+                    if (current is HomeLoading) {
+                      return false;
+                    }
+                    if (current is CreateUserFailure) {
+                      return false;
+                    }
+                    if (current is FetchTitleFailure) {
+                      return false;
+                    }
+                    return true;
+                  },
+                  builder: (context, state) {
+                    if (state is HomeUninitialized) {
+                      _homeBloc.add(CheckUserID());
+                    }
+                    if (state is HomeAccount) {
+                      _homeBloc.add(FetchTitle());
+                    }
+                    if (state is HomeNoAccount) {
+                      return CreateAccountForm(
+                        usernameController: _usernameController,
+                        onButtonPressed: _onCreateAccount,
+                      );
+                    } else if (state is HomeReady) {
+                      return HomeLayout(
+                        title: state.title,
+                        onButtonPressed: _onSendAnswer,
+                      );
+                    } else {
+                      return HomePlaceholder(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: constraints.maxWidth < 600 ? 18 : 24,
+                            horizontal: constraints.maxWidth < 600 ? 18 : 24,
                           ),
-                        );
-                      } else if (state is FetchTitleFailure) {
-                        return HomePlaceholder(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                              vertical: constraints.maxWidth < 600 ? 18 : 24,
-                              horizontal: constraints.maxWidth < 600 ? 18 : 24,
-                            ),
-                            child: Text(
-                              state.error,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.grey.shade100,
-                                fontFamily: 'Poppins',
-                                fontSize: constraints.maxWidth < 600 ? 16 : 20,
-                              ),
-                            ),
+                          child: CircularProgressIndicator(
+                            color: Colors.grey.shade100,
                           ),
-                        );
-                      } else if (state is HomeNoAccount) {
-                        return CreateAccountForm(
-                          onButtonPressed: _onCreateAccount,
-                        );
-                      } else if (state is HomeReady) {
-                        return HomeLayout(
-                          title: state.title,
-                        );
-                      } else {
-                        return HomePlaceholder(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                              vertical: constraints.maxWidth < 600 ? 18 : 24,
-                              horizontal: constraints.maxWidth < 600 ? 18 : 24,
-                            ),
-                            child: CircularProgressIndicator(
-                              color: Colors.grey.shade100,
-                            ),
-                          ),
-                        );
-                      }
-                    }),
+                        ),
+                      );
+                    }
+                  },
+                ),
               ),
             ],
           ),
@@ -122,11 +132,13 @@ class HomeScreenState extends State<HomeScreen> {
 }
 
 class HomeLayout extends StatelessWidget {
-  final String title;
+  final ArticleTitle title;
+  final Function onButtonPressed;
 
   const HomeLayout({
     Key? key,
     required this.title,
+    required this.onButtonPressed,
   }) : super(key: key);
 
   @override
@@ -135,7 +147,6 @@ class HomeLayout extends StatelessWidget {
       builder: (context, constraints) {
         return Column(
           children: <Widget>[
-            const TopBar(),
             Expanded(
               child: Center(
                 child: Padding(
@@ -143,7 +154,7 @@ class HomeLayout extends StatelessWidget {
                     horizontal: constraints.maxWidth < 600 ? 18 : 24,
                   ),
                   child: ClickbaitTitle(
-                    title: title,
+                    title: title.content,
                     fontSize: constraints.maxWidth < 600 ? 24 : 28,
                   ),
                 ),
@@ -163,7 +174,9 @@ class HomeLayout extends StatelessWidget {
                     primaryColor: Colors.green.shade300,
                     secondaryColor: Colors.green.shade400,
                     fontSize: constraints.maxWidth < 600 ? 36 : 44,
-                    onPressed: () {},
+                    onPressed: () {
+                      onButtonPressed(title.titleID, true);
+                    },
                   ),
                   ClickbaitButton(
                     text: 'NIE',
@@ -171,7 +184,9 @@ class HomeLayout extends StatelessWidget {
                     primaryColor: Colors.red.shade300,
                     secondaryColor: Colors.red.shade400,
                     fontSize: constraints.maxWidth < 600 ? 36 : 44,
-                    onPressed: () {},
+                    onPressed: () {
+                      onButtonPressed(title.titleID, false);
+                    },
                   ),
                 ],
               ),
@@ -186,7 +201,9 @@ class HomeLayout extends StatelessWidget {
                 primaryColor: Colors.lightBlue.shade600,
                 secondaryColor: Colors.lightBlue.shade700,
                 fontSize: constraints.maxWidth < 600 ? 36 : 44,
-                onPressed: () {},
+                onPressed: () {
+                  onButtonPressed(title.titleID, null);
+                },
               ),
             ),
           ],
@@ -245,10 +262,12 @@ class HomePlaceholder extends StatelessWidget {
 
 class CreateAccountForm extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController usernameController;
   final Function onButtonPressed;
 
   CreateAccountForm({
     Key? key,
+    required this.usernameController,
     required this.onButtonPressed,
   }) : super(key: key);
 
@@ -285,6 +304,7 @@ class CreateAccountForm extends StatelessWidget {
                   right: constraints.maxWidth < 600 ? 18 : 24,
                 ),
                 child: TextFormField(
+                  controller: usernameController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Nazwa użytkownika nie może być pusta!';
@@ -349,7 +369,7 @@ class CreateAccountForm extends StatelessWidget {
                 fontSize: constraints.maxWidth < 600 ? 28 : 36,
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    onButtonPressed;
+                    onButtonPressed();
                   }
                 },
               ),

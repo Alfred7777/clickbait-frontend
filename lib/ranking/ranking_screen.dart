@@ -65,6 +65,7 @@ class RankingScreenState extends State<RankingScreen> {
                     } else if (state is RankingReady) {
                       return RankingTable(
                         rankingList: state.rankingList,
+                        userID: state.userID ?? '',
                       );
                     } else {
                       return RankingTablePlaceholder(
