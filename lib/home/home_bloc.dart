@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:clickbait_app/repositories/user_repository.dart';
 import 'package:clickbait_app/repositories/title_repository.dart';
@@ -33,6 +34,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             title: _title,
           ),
         );
+      } on HttpException {
+        emit(
+          const FetchTitleFailure(
+            error: 'Błąd komunikacji z serwerem. Sprawdź swoje połączenie.',
+          ),
+        );
       } catch (exception) {
         emit(
           CreateUserFailure(
@@ -51,6 +58,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         emit(
           HomeReady(
             title: _title,
+          ),
+        );
+      } on HttpException {
+        emit(
+          const FetchTitleFailure(
+            error: 'Błąd komunikacji z serwerem. Sprawdź swoje połączenie.',
           ),
         );
       } catch (exception) {
@@ -74,6 +87,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         emit(
           HomeReady(
             title: _title,
+          ),
+        );
+      } on HttpException {
+        emit(
+          const FetchTitleFailure(
+            error: 'Błąd komunikacji z serwerem. Sprawdź swoje połączenie.',
           ),
         );
       } catch (exception) {

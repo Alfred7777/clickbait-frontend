@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:clickbait_app/repositories/user_repository.dart';
 import 'ranking_event.dart';
@@ -19,6 +20,12 @@ class RankingBloc extends Bloc<RankingEvent, RankingState> {
           RankingReady(
             rankingList: _rankingList,
             userID: _userID,
+          ),
+        );
+      } on HttpException {
+        emit(
+          const FetchRankingFailure(
+            error: 'Błąd komunikacji z serwerem. Sprawdź swoje połączenie.',
           ),
         );
       } catch (exception) {
