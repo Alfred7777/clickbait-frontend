@@ -16,20 +16,24 @@ class TitleRepository {
       'Content-Type': 'application/json',
     };
 
-    var response = await http.get(
-      uri,
-      headers: headers,
-    );
-
-    if (response.statusCode == 200) {
-      return ArticleTitle.fromJson(json.decode(response.body));
-    } else if (response.statusCode == 204) {
-      return const ArticleTitle(
-        titleID: '666666',
-        content: 'Oznaczyłeś wszystkie tytuły z naszej bazy danych!',
+    try {
+      var response = await http.get(
+        uri,
+        headers: headers,
       );
-    } else {
-      return Future.error('Nie udało się pobrać kolejnego nagłówka!');
+
+      if (response.statusCode == 200) {
+        return ArticleTitle.fromJson(json.decode(response.body));
+      } else if (response.statusCode == 204) {
+        return const ArticleTitle(
+          titleID: '666666',
+          content: 'Oznaczyłeś wszystkie tytuły z naszej bazy danych!',
+        );
+      } else {
+        return Future.error('Nie udało się pobrać kolejnego nagłówka!');
+      }
+    } catch (exception) {
+      return Future.error('Błąd komunikacji z serwerem! Sprawdź połączenie.');
     }
   }
 
@@ -50,17 +54,21 @@ class TitleRepository {
       'label': answer,
     };
 
-    var response = await http.post(
-      uri,
-      headers: headers,
-      body: json.encode(body),
-    );
+    try {
+      var response = await http.post(
+        uri,
+        headers: headers,
+        body: json.encode(body),
+      );
 
-    if (response.statusCode == 201) {
-    } else if (response.statusCode == 409) {
-      return Future.error('Ten użytkownik już oznaczył ten tytuł!');
-    } else {
-      return Future.error('Nie udało się przesłać odpowiedzi!');
+      if (response.statusCode == 201) {
+      } else if (response.statusCode == 409) {
+        return Future.error('Ten użytkownik już oznaczył ten tytuł!');
+      } else {
+        return Future.error('Nie udało się przesłać odpowiedzi!');
+      }
+    } catch (exception) {
+      return Future.error('Błąd komunikacji z serwerem! Sprawdź połączenie.');
     }
   }
 }

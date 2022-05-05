@@ -22,20 +22,11 @@ class RankingBloc extends Bloc<RankingEvent, RankingState> {
           ),
         );
       } catch (exception) {
-        var message = exception.toString();
-        if (message.contains('XMLHttpRequest')) {
-          emit(
-            const FetchRankingFailure(
-              error: 'Błąd komunikacji z serwerem. Sprawdź swoje połączenie.',
-            ),
-          );
-        } else {
-          emit(
-            FetchRankingFailure(
-              error: message,
-            ),
-          );
-        }
+        emit(
+          FetchRankingFailure(
+            error: exception.toString(),
+          ),
+        );
       }
     });
   }

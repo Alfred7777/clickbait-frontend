@@ -31,19 +31,23 @@ class UserRepository {
       'username': username,
     };
 
-    var response = await http.post(
-      uri,
-      headers: headers,
-      body: json.encode(body),
-    );
+    try {
+      var response = await http.post(
+        uri,
+        headers: headers,
+        body: json.encode(body),
+      );
 
-    if (response.statusCode == 201) {
-      await prefs.setString('userID', json.decode(response.body)['user_id']);
-      return json.decode(response.body)['user_id'];
-    } else if (response.statusCode == 409) {
-      return Future.error('Nazwa użytkownika jest już zajęta!');
-    } else {
-      return Future.error('Nie udało się utworzyć nazwy użytkownika!');
+      if (response.statusCode == 201) {
+        await prefs.setString('userID', json.decode(response.body)['user_id']);
+        return json.decode(response.body)['user_id'];
+      } else if (response.statusCode == 409) {
+        return Future.error('Nazwa użytkownika jest już zajęta!');
+      } else {
+        return Future.error('Nie udało się utworzyć nazwy użytkownika!');
+      }
+    } catch (exception) {
+      return Future.error('Błąd komunikacji z serwerem! Sprawdź połączenie.');
     }
   }
 
@@ -55,13 +59,17 @@ class UserRepository {
       path: '/api/user/ranking',
     );
 
-    var response = await http.get(uri);
+    try {
+      var response = await http.get(uri);
 
-    if (response.statusCode == 200) {
-      var users = json.decode(response.body)['users'];
-      return users.map<User>((user) => User.fromJson(user)).toList();
-    } else {
-      return Future.error('Nie udało się pobrać listy rankingowej!');
+      if (response.statusCode == 200) {
+        var users = json.decode(response.body)['users'];
+        return users.map<User>((user) => User.fromJson(user)).toList();
+      } else {
+        return Future.error('Nie udało się pobrać listy rankingowej!');
+      }
+    } catch (exception) {
+      return Future.error('Błąd komunikacji z serwerem! Sprawdź połączenie.');
     }
   }
 }

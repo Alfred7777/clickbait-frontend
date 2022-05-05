@@ -34,20 +34,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           ),
         );
       } catch (exception) {
-        var message = exception.toString();
-        if (message.contains('XMLHttpRequest')) {
-          emit(
-            const FetchTitleFailure(
-              error: 'Błąd komunikacji z serwerem. Sprawdź swoje połączenie.',
-            ),
-          );
-        } else {
-          emit(
-            CreateUserFailure(
-              error: message,
-            ),
-          );
-        }
+        emit(
+          CreateUserFailure(
+            error: exception.toString(),
+          ),
+        );
       }
     });
 
@@ -63,20 +54,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           ),
         );
       } catch (exception) {
-        var message = exception.toString();
-        if (message.contains('XMLHttpRequest')) {
-          emit(
-            const FetchTitleFailure(
-              error: 'Błąd komunikacji z serwerem. Sprawdź swoje połączenie.',
-            ),
-          );
-        } else {
-          emit(
-            FetchTitleFailure(
-              error: message,
-            ),
-          );
-        }
+        emit(
+          FetchTitleFailure(
+            error: exception.toString(),
+          ),
+        );
       }
     });
 
@@ -95,20 +77,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           ),
         );
       } catch (exception) {
-        var message = exception.toString();
-        if (message.contains('XMLHttpRequest')) {
-          emit(
-            const FetchTitleFailure(
-              error: 'Błąd komunikacji z serwerem. Sprawdź swoje połączenie.',
-            ),
-          );
-        } else {
-          emit(
-            FetchTitleFailure(
-              error: message,
-            ),
-          );
-        }
+        emit(
+          FetchTitleFailure(
+            error: exception.toString(),
+          ),
+        );
       }
     });
   }
