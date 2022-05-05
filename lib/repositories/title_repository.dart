@@ -5,10 +5,10 @@ import 'dart:convert';
 class TitleRepository {
   Future<ArticleTitle> getTitle(String userID) async {
     var uri = Uri(
-      scheme: 'http',
-      host: 'localhost',
-      port: 62266,
-      path: '/title/',
+      scheme: 'https',
+      host: 'czytoclickbait.projektstudencki.pl',
+      port: 443,
+      path: '/api/title/',
     );
 
     var headers = {
@@ -35,10 +35,10 @@ class TitleRepository {
 
   void sendAnswer(String userID, String titleID, bool answer) async {
     var uri = Uri(
-      scheme: 'http',
-      host: 'localhost',
-      port: 62266,
-      path: '/title/label',
+      scheme: 'https',
+      host: 'czytoclickbait.projektstudencki.pl',
+      port: 443,
+      path: '/api/title/label',
     );
 
     var headers = {

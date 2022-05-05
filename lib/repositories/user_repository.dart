@@ -18,10 +18,10 @@ class UserRepository {
   Future<String> createUser(String username) async {
     final prefs = await SharedPreferences.getInstance();
     var uri = Uri(
-      scheme: 'http',
-      host: 'localhost',
-      port: 62266,
-      path: '/user/create',
+      scheme: 'https',
+      host: 'czytoclickbait.projektstudencki.pl',
+      port: 443,
+      path: '/api/user/create',
     );
 
     var headers = {
@@ -49,10 +49,10 @@ class UserRepository {
 
   Future<List<User>> getRankingList() async {
     var uri = Uri(
-      scheme: 'http',
-      host: 'localhost',
-      port: 62266,
-      path: '/user/ranking',
+      scheme: 'https',
+      host: 'czytoclickbait.projektstudencki.pl',
+      port: 443,
+      path: '/api/user/ranking',
     );
 
     var response = await http.get(uri);
