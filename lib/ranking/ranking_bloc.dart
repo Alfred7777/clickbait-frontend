@@ -14,6 +14,7 @@ class RankingBloc extends Bloc<RankingEvent, RankingState> {
       try {
         var _userID = await userRepository.getUserID();
         var _rankingList = await userRepository.getRankingList();
+        _rankingList.sort((a, b) => b.rankingScore.compareTo(a.rankingScore));
         
         emit(
           RankingReady(
