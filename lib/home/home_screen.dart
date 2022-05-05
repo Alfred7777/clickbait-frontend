@@ -66,15 +66,19 @@ class HomeScreenState extends State<HomeScreen> {
                     if (state is CreateUserFailure) {
                       var snackBar = SnackBar(
                         content: Text(state.error),
+                        duration: const Duration(seconds: 2),
                         backgroundColor: Colors.red.shade400,
                       );
+                      ScaffoldMessenger.of(context).removeCurrentSnackBar();
                       ScaffoldMessenger.of(context).showSnackBar(snackBar);
                     }
                     if (state is FetchTitleFailure) {
                       var snackBar = SnackBar(
                         content: Text(state.error),
+                        duration: const Duration(seconds: 2),
                         backgroundColor: Colors.red.shade400,
                       );
+                      ScaffoldMessenger.of(context).removeCurrentSnackBar();
                       ScaffoldMessenger.of(context).showSnackBar(snackBar);
                     }
                   },
@@ -286,7 +290,7 @@ class CreateAccountForm extends StatelessWidget {
                   right: constraints.maxWidth < 600 ? 24 : 32,
                 ),
                 child: Text(
-                  'Aby kontynuować musisz utworzyć swoją nazwe użytkownika!',
+                  'Aby kontynuować musisz utworzyć swoją nazwe użytkownika! Dodatkowo w zakładce POMOC znajdziesz cenne informacje, które pomogą Ci korzystać z aplikacji.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.grey.shade100,

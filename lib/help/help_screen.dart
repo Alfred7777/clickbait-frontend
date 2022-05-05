@@ -111,8 +111,9 @@ class HelpList extends StatelessWidget {
                     ),
                     children: const <TextSpan>[
                       TextSpan(text: 'W naszej aplikacji skupiamy się tylko na tytułach artykułów w formie tekstowej. '),
-                      TextSpan(text: 'Poszukujemy zatem takich nagłowków, które zwracają uwagę, wywołuje emocją lub wzbudzają ludzką ciekawość, poprzez swoją formę lub treść. '),
+                      TextSpan(text: 'Poszukujemy zatem takich nagłowków, które zwracają uwagę, wywołują emocje lub wzbudzają ludzką ciekawość, poprzez swoją formę lub treść. '),
                       TextSpan(text: 'W związku z tym tytuły, które mają wymienione wyżej cechy powinny być przez Ciebie oznaczone jako clickbait. '),
+                      TextSpan(text: 'Nagłówki, w których celowo została pominięta prosta informacja, która powinna być w nich zawarta, w celu przyciągnięcia użytkownika rownież zaliczają się jako clickbait. '),
                       TextSpan(text: 'Warto wspomnieć, że rozpatrujemy w tym przypadku sam tytuł, bez jego związku z treścią artykułu, więc ten aspekt przy ocenie powinieneś pominąć. '),
                     ],
                   ),
