@@ -290,7 +290,7 @@ class CreateAccountForm extends StatelessWidget {
                   right: constraints.maxWidth < 600 ? 24 : 32,
                 ),
                 child: Text(
-                  'Aby kontynuować musisz utworzyć swoją nazwe użytkownika! Dodatkowo w zakładce POMOC znajdziesz cenne informacje, które pomogą Ci korzystać z aplikacji.',
+                  'Aby kontynuować musisz utworzyć swoją nazwe użytkownika! Dodatkowo w zakładce POMOC znajdziesz informacje, które pomogą Ci korzystać z aplikacji.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.grey.shade100,

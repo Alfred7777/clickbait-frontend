@@ -30,6 +30,13 @@ class RankingScreenState extends State<RankingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Duration _delta = const Duration(minutes: 10);
+    int _now = DateTime.now().millisecondsSinceEpoch;
+    
+    var _rankingUpdateTime = DateTime.fromMillisecondsSinceEpoch(
+      _now - _now % _delta.inMilliseconds + _delta.inMilliseconds,
+    );
+
     return LayoutBuilder(
       builder: ((context, constraints) {
         return Scaffold(
@@ -37,6 +44,20 @@ class RankingScreenState extends State<RankingScreen> {
           body: Column(
             children: <Widget>[
               const TopBar(),
+              Padding(
+                padding: EdgeInsets.only(
+                  top: constraints.maxWidth < 600 ? 18 : 24,
+                ),
+                child: Text(
+                  'Kolejna aktualizacja rankingu o ${_rankingUpdateTime.hour}:${_rankingUpdateTime.minute}',
+                  style: TextStyle(
+                    color: Colors.grey.shade100,
+                    fontFamily: 'Poppins',
+                    fontSize: constraints.maxWidth < 600 ? 14 : 18,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ),
               Expanded(
                 child: BlocBuilder(
                   bloc: _rankingBloc,
@@ -49,7 +70,7 @@ class RankingScreenState extends State<RankingScreen> {
                         child: Padding(
                           padding: EdgeInsets.symmetric(
                             vertical: constraints.maxWidth < 600 ? 18 : 24,
-                            horizontal: constraints.maxWidth < 600 ? 18 : 24, 
+                            horizontal: constraints.maxWidth < 600 ? 18 : 24,
                           ),
                           child: Text(
                             state.error,
@@ -72,7 +93,7 @@ class RankingScreenState extends State<RankingScreen> {
                         child: Padding(
                           padding: EdgeInsets.symmetric(
                             vertical: constraints.maxWidth < 600 ? 18 : 24,
-                            horizontal: constraints.maxWidth < 600 ? 18 : 24, 
+                            horizontal: constraints.maxWidth < 600 ? 18 : 24,
                           ),
                           child: CircularProgressIndicator(
                             color: Colors.grey.shade100,
