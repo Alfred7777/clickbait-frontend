@@ -1,4 +1,5 @@
 import 'package:clickbait_app/ranking/ranking_event.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:clickbait_app/widgets/top_bar.dart';
@@ -32,10 +33,12 @@ class RankingScreenState extends State<RankingScreen> {
   Widget build(BuildContext context) {
     Duration _delta = const Duration(minutes: 10);
     int _now = DateTime.now().millisecondsSinceEpoch;
-    
-    var _rankingUpdateTime = DateTime.fromMillisecondsSinceEpoch(
+    DateFormat _dateFormat = DateFormat("HH:mm");
+
+    DateTime _rankingUpdateTime = DateTime.fromMillisecondsSinceEpoch(
       _now - _now % _delta.inMilliseconds + _delta.inMilliseconds,
     );
+    String _rankingUpdateTimeString = _dateFormat.format(_rankingUpdateTime);
 
     return LayoutBuilder(
       builder: ((context, constraints) {
@@ -49,7 +52,7 @@ class RankingScreenState extends State<RankingScreen> {
                   top: constraints.maxWidth < 600 ? 18 : 24,
                 ),
                 child: Text(
-                  'Kolejna aktualizacja rankingu o ${_rankingUpdateTime.hour}:${_rankingUpdateTime.minute}',
+                  'Kolejna aktualizacja rankingu o $_rankingUpdateTimeString',
                   style: TextStyle(
                     color: Colors.grey.shade100,
                     fontFamily: 'Poppins',
